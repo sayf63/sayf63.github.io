@@ -2,9 +2,10 @@
 const strApi = 'https://api.open-meteo.com/v1/forecast?latitude=36.162838&longitude=-85.50164&current=temperature_2m,relative_humidity_2m,precipitation,weather_code&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FChicago';
 
 
-//Weather variables to be used
+//Weather variables to be used later in code
 const strLocation = 'Cookeville';
 let strTemp;
+let strTempIcon;
 let strSky;
 let strWeathercode;
 let strCurrentWeatherIcon;
@@ -38,6 +39,7 @@ const weathercodeIcon = {
     86: "bi bi-cloud-snow-fill"
   };
 
+
   const weathercode = {
     0: "Clear sky",
     1: "Mainly clear",
@@ -67,20 +69,9 @@ const weathercodeIcon = {
   };
   
 
-  
-    // Vanilla JS with fetch use to garner data from API
-/*     fetch(strApi)
-    .then(objResponse => objResponse.json())
-    .then(objData => {
-        console.log(objData)
-        let strTemp = objData.current.temperature_2m
-        let strSky = objData.current.precipitation
-        console.log(strTemp)
-        console.log(strSky)
-        console.log(strLocation)
-    }) */
 
-async function getweather(strApi){
+//Function that garners the API data, converts it through json and allows it to be readable in proper code
+function getweather(strApi){
     fetch(strApi)
     .then(objResponse => objResponse.json())
     .then(objData => {
@@ -88,12 +79,18 @@ async function getweather(strApi){
         strSky = objData.current.precipitation
         strWeathercode = objData.current.weather_code
         strCurrentWeatherIcon = weathercodeIcon[strWeathercode];
+        if(strTemp < 30){
+            strTempIcon = "bi bi-thermometer"
+        } else {
+            strTempIcon = "bi bi-thermometer-half"
+        }
         document.getElementById('txtTemperatureNum').textContent = `${strTemp}°`
+        document.querySelector("#TempIcon").className = strTempIcon;
         document.getElementById('txtSky').textContent = `${weathercode[strWeathercode]}`
-        document.getElementById('SkyIcon').innerHTML = `${strCurrentWeatherIcon}`
+        document.querySelector("#SkyIcon").className = weathercodeIcon[strWeathercode];
         console.log(strTemp)
     })
     document.getElementById('txtLocation').textContent = strLocation;
 };
-
+//Calling function
 getweather(strApi);
